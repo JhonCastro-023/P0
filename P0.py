@@ -6,7 +6,7 @@ macros = {}
 var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
 macro_def_regex = r"NEW MACRO (\w+)\s*\(([\w\s,]*)\)\s*\{(.+)\}"
 exec_block_regex = r"EXEC\s*\{(.*)\}"
-command_regex = r"(turnToMy|turnToThe|walk|jump|drop|pick|grab|letGo|pop|moves|safeExe)\s*\((.*)\s*\)"
+command_regex = r"(turnToMy|turnToThe|walk|jump|drop|pick|grab|letGo|pop|moves|safeExe|nop)\s*\((.*)\s*\)"
 control_structure_regex = r"(if|do|rep|fi|od|per|else)"
 
 def parse_variable_definition(line):

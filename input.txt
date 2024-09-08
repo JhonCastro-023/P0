@@ -1,2 +1,3 @@
-NEW VAR x = 10;
-EXEC { walk(3); if not(isBlocked?(front)) then { move(1); } else { nop; } fi;}
+NEW VAR one = 1;
+NEW MACRO goend ();
+EXEC { walk(3); if not(isBlocked?(front)) then { move(one); goend(); } else { nop; } fi;}
