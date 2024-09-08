@@ -108,12 +108,15 @@ def parse_lines(lines):
 def parse_file(file_path):
     try:
         with open(file_path, "r") as file:
-            lines = file.readlines()
-        return parse_lines(lines)
+            for line in file:
+                result = parse_lines([line])
+                if result != "yes":
+                    return result
+        return "yes"
     except FileNotFoundError:
-        return "No se encontró el archivo."
+        return "no: File not found."
     except Exception as e:
-        return f"{e}"
+        return f"no: {e}"
 
 def main():
     print("Escoge una de las siguientes opciones:")
