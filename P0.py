@@ -5,8 +5,8 @@ macros = {}
 
 var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
 macro_def_regex = r"NEW MACRO (\w+)\s*\(([\w\s,]*)\)\s*\{(.+)\}"
-exec_block_regex = r"EXEC\s*\{(.+)\}"
-command_regex = r"(turnToMy|turnToThe|walk|jump|drop|pick|grab|letGo|pop|moves|safeExe)\(([^)]*)\)"
+exec_block_regex = r"EXEC\s*\{(.*)\}"
+command_regex = r"(turnToMy|turnToThe|walk|jump|drop|pick|grab|letGo|pop|moves|safeExe)\s*\((.*)\s*\)"
 control_structure_regex = r"(if|do|rep|fi|od|per|else)"
 
 def parse_variable_definition(line):
@@ -55,21 +55,21 @@ def parse_command(command):
 
 def validate_command(command_name, params):
     params_list = params.split(",") if params else []
-    
+    cleaned_params_list = [move.strip() for move in params_list]
     if command_name == "turnToMy":
-        if params_list[0] not in ["left", "right", "back"]:
-            raise ValueError(f"Invalid direction '{params_list[0]}' for turnToMy")
+        if cleaned_params_list[0] not in ["left", "right", "back"]:
+            raise ValueError(f"Invalid direction '{cleaned_params_list[0]}' for turnToMy")
     elif command_name == "turnToThe":
-        if params_list[0] not in ["north", "south", "east", "west"]:
-            raise ValueError(f"Invalid orientation '{params_list[0]}' for turnToThe")
+        if cleaned_params_list[0] not in ["north", "south", "east", "west"]:
+            raise ValueError(f"Invalid orientation '{cleaned_params_list[0]}' for turnToThe")
     elif command_name in ["walk", "jump", "drop", "pick", "grab", "letGo", "pop"]:
-        if not validate_value(params_list[0]):
-            raise ValueError(f"Invalid value '{params_list[0]}' for {command_name}")
+        if not validate_value(cleaned_params_list[0]):
+            raise ValueError(f"Invalid value '{cleaned_params_list[0]}' for {command_name}")
     elif command_name == "moves":
-        if not all(move in ["forward", "right", "left", "backwards"] for move in params_list):
-            raise ValueError(f"Invalid moves '{params_list}' in 'moves'")
+        if not all(move in ["forward", "right", "left", "backwards","back"] for move in cleaned_params_list):
+            raise ValueError(f"Invalid moves '{cleaned_params_list}' in 'moves'")
     elif command_name == "safeExe":
-        return parse_command(params_list[0])
+        return parse_command(cleaned_params_list[0])
     
     return True
 
@@ -87,17 +87,16 @@ def parse_lines(lines):
     global variables, macros
     variables = {}
     macros = {}
-    
     try:
         for line in lines:
-            line = line.strip().lower()
-            if line.startswith("new var"):
+            line = line.strip()
+            if line.startswith("NEW VAR"):
                 if not parse_variable_definition(line):
                     return "no: Definicion de variable invalida."
-            elif line.startswith("new macro"):
+            elif line.startswith("NEW MACRO"):
                 if not parse_macro_definition(line):
                     return "no: definicion de Macro invalida."
-            elif line.startswith("exec"):
+            elif line.startswith("EXEC"):
                 if not parse_exec_block(line):
                     return "no: bloque EXEC invalido."
             else:

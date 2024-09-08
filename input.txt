@@ -1,5 +1,2 @@
 NEW VAR x = 10;
-EXEC {
-    walk(3);
-    if not(isBlocked?(front)) then { move(1); } else { nop; } fi;
-}
+EXEC { walk(3); if not(isBlocked?(front)) then { move(1); } else { nop; } fi;}
