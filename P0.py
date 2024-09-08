@@ -22,10 +22,10 @@ def parse_variable_definition(line):
 def parse_macro_definition(line):
     match = re.match(macro_def_regex, line)
     if match:
-        macro_name, params, block = match.groups()
+        macro_name, params = match.groups()
         if macro_name in macros:
             raise ValueError(f"El macro '{macro_name}' ya fue definido.")
-        macros[macro_name] = (params.split(","), block.strip())
+        macros[macro_name] = [param.strip() for param in params.split(",")]
         return True
     return False
 
