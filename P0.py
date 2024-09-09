@@ -1,11 +1,13 @@
 import re
 
+##bloquexd
+bloque = r"\n*{.*}\n*"
 ##var
 var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
 ##Macro
 macro_def_regex = r"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*\n*\{*\n*(.*)\n*\}*"
 ##EXEC
-exec_block_regex = r"EXEC\s*\{\n*(.*)\n*\}"
+exec_block_regex = rf"EXEC\s*{bloque}"
 ##Valores
 lista_valores = ["size", "myX", "myY", "myChips", "myBalloons", "balloonsHere", "chipsHere", "roomForChips"]
 Valores_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
@@ -16,11 +18,13 @@ comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
 command_regex = rf"({Palabras_Patron})\s*\((.*)\s*\)"
 ##Condicionales y condicion
 condicion = r"(isBlocked\?|isFacing\?|zero\?)\s*\((.*)\s*\)"
-condicional_then_else = r"(\n+then\s*\{(.*)\}(\n+else\s*\{(.*)\})?)"
+condicional_then = rf"\n+then\s*{bloque}"
+condicional_else = rf"(\n+else\s*{bloque})?"
+condicional_then_else = rf"({condicional_then}{condicional_else})*"
 condicnoal_not = r"\s+(not?)"
 condicional = rf"if{condicnoal_not}\s*\(({condicion})\s*\){condicional_then_else}"
 ##Loop
-loop = rf"do\s*{condicion}\s*(.*)\s*"
+loop = rf"do\s*{condicion}\s*{bloque})\s*"
 
 control_structure_regex = r"(if|do|rep|fi|od|per|else)"
 
