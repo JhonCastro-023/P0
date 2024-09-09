@@ -2,16 +2,16 @@ import re
 
 
 ##Numero
-numero = r"^\d+$"
+numero = r"^-?\d+(\.\d+)?$"
 
 ##bloque
-bloque = r"\n*{.*}\n*"
+bloque = r"\n*{.*;*}\n*"
 
 ##var
-var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
+var_def_regex = rf"NEW VAR (\w+)\s*=\s*{numero}]"
 
 ##Macro
-macro_def_regex = r"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*\n*\{*\n*(.*)\n*\}*"
+macro_def_regex = rf"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*{bloque}"
 
 ##EXEC
 exec_block_regex = rf"EXEC\s*{bloque}"
@@ -19,15 +19,28 @@ exec_block_regex = rf"EXEC\s*{bloque}"
 ##Valores
 lista_valores = ["size", "myX", "myY", "myChips", "myBalloons", "balloonsHere", "chipsHere", "roomForChips"]
 Valores_Patron = "|".join(re.escape(palabra) for palabra in lista_valores)
-valores_regex = rf"({Valores_Patron})\s*\((.*)\s*\)"
+valores_regex = rf"{Valores_Patron}"
 
 ##Comandos
+    ##direcciones
+direcciones_simples = r"\s*(forward|left|right|back|backwards)\s*"
+direcciones_complejas = r"\s*(north|south|east|west)\s*"
+    ##Todos los comandos
+turnToMy = rf"turnToMy\s*\(\s*{direcciones_simples}\s*\)"
+turnToThe = rf"turnToMy\s*\(\s*{direcciones_complejas}\s*\)"
+comandos_para_w_j_d_p_g_lG_pop = r"(walk|jump|drop|pick|grab|letGo|pop)\s*"
+w_j_d_p_g_lG_pop = rf"{comandos_para_w_j_d_p_g_lG_pop}\(\s*{numero}\s*\\)"
+moves = rf"moves\s*\(\s*({direcciones_simples},)*\s*\)"
+nop = r""
+todos_comandos_msafeExe = rf"\s*({turnToMy}|{turnToThe}|{w_j_d_p_g_lG_pop}|{moves}|{nop})\s*"
+safeExe = rf"safeExe\s*\({todos_comandos_msafeExe}\)"
+
 lista_comandos = ["turnToMy", "turnToThe", "walk", "jump", "drop", "pick", "grab", "letGo", "pop", "moves", "safeExe", "nop"]
 comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_comandos)
-command_regex = rf"({comandos_Patron})\s*\((.*)\s*\)"
+command_regex = rf"({comandos_Patron})\s*\(\s*(.*)\s*\)"
 
 ##Condicionales y condicion
-condicion = r"(isBlocked\?|isFacing\?|zero\?)\s*\((.*)\s*\)"
+condicion = r"(isBlocked\?|isFacing\?|zero\?)\s*\(\s*(.*)\s*\)"
 condicional_then = rf"\n+then\s*{bloque}"
 condicional_else = rf"(\n+else\s*{bloque})?"
 condicional_then_else = rf"({condicional_then}{condicional_else})*"
@@ -38,6 +51,7 @@ condicional = rf"if{condicnoal_not}\s*\(({condicion})\s*\){condicional_then_else
 loop = rf"do\s*{condicion}\s*{bloque})\s*"
 
 ##repetirnumveces
+Repeticion = rf"rep\s*{numero}\s*{bloque}"
 
 
 
