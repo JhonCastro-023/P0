@@ -1,20 +1,27 @@
 import re
 
-variables = {}
-macros = {}
-
+##var
 var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
+##Macro
 macro_def_regex = r"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*\n*\{*\n*(.*)\n*\}*"
+##EXEC
 exec_block_regex = r"EXEC\s*\{\n*(.*)\n*\}"
-lista_comandos = ["turnToMy", "turnToThe", "walk", "jump", "drop", "pick", "grab", "letGo", "pop", "moves", "safeExe", "nop"]
-comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
-command_regex = rf"({Palabras_Patron})\s*\((.*)\s*\)"
+##Valores
 lista_valores = ["size", "myX", "myY", "myChips", "myBalloons", "balloonsHere", "chipsHere", "roomForChips"]
 Valores_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
 valores_regex = rf"({Valores_Patron})\s*\((.*)\s*\)"
+##Comandos
+lista_comandos = ["turnToMy", "turnToThe", "walk", "jump", "drop", "pick", "grab", "letGo", "pop", "moves", "safeExe", "nop"]
+comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
+command_regex = rf"({Palabras_Patron})\s*\((.*)\s*\)"
+##Condicionales y condicion
 condicion = r"(isBlocked\?|isFacing\?|zero\?)\s*\((.*)\s*\)"
-condicional_then_else = r"(then\s*\{()\})"
-condicional = rf"(if)\s+(not*)\s*\(({condicion})\s*\)\n+{condicional_then_else}"
+condicional_then_else = r"(\n+then\s*\{(.*)\}(\n+else\s*\{(.*)\})?)"
+condicnoal_not = r"\s+(not?)"
+condicional = rf"if{condicnoal_not}\s*\(({condicion})\s*\){condicional_then_else}"
+##Loop
+loop = rf"do\s*{condicion}\s*(.*)\s*"
+
 control_structure_regex = r"(if|do|rep|fi|od|per|else)"
 
 def parse_variable_definition(line):
