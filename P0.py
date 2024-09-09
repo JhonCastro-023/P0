@@ -3,11 +3,13 @@ import re
 variables = {}
 macros = {}
 
+
 var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
 macro_def_regex = r"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*"
 exec_block_regex = r"EXEC\s*\{(.*)\}"
 command_regex = r"(turnToMy|turnToThe|walk|jump|drop|pick|grab|letGo|pop|moves|safeExe|nop)\s*\((.*)\s*\)"
 control_structure_regex = r"(if|do|rep|fi|od|per|else)"
+
 
 def parse_variable_definition(line):
     match = re.match(var_def_regex, line)
@@ -19,6 +21,7 @@ def parse_variable_definition(line):
         return True
     return False
 
+
 def parse_macro_definition(line):
     match = re.match(macro_def_regex, line)
     if match:
@@ -29,22 +32,24 @@ def parse_macro_definition(line):
         return True
     return False
 
+
 def parse_exec_block(line):
     match = re.match(exec_block_regex, line)
     if match:
-        block_content = match.groups()[0]
+        block_content = match.group(1)  # Use group(1) to access the matched content
         return parse_block(block_content)
     return False
+
 
 def parse_block(block):
     commands = block.split(";")
     for command in commands:
         command = command.strip()
-        if not command:
-            continue
-        if not (parse_command(command) or parse_control_structure(command)):
-            raise ValueError(f"Syntaxis invalida en el comando: '{command}'")
+        if command:  # Only process non-empty commands
+            if not (parse_command(command) or parse_control_structure(command)):
+                raise ValueError(f"Syntaxis invalida en el comando: '{command}'")
     return True
+
 
 def parse_command(command):
     match = re.match(command_regex, command)
@@ -53,40 +58,41 @@ def parse_command(command):
         return validate_command(command_name, params)
     return False
 
+
 def validate_command(command_name, params):
-    params_list = params.split(",") if params else []
-    cleaned_params_list = [move.strip() for move in params_list]
+    params_list = [p.strip() for p in params.split(",")] if params else []
+    
     if command_name == "turnToMy":
-        if cleaned_params_list[0] not in ["left", "right", "back"]:
-            raise ValueError(f"Invalid direction '{cleaned_params_list[0]}' for turnToMy")
+        if params_list[0] not in ["left", "right", "back"]:
+            raise ValueError(f"Invalid direction '{params_list[0]}' for turnToMy")
     elif command_name == "turnToThe":
-        if cleaned_params_list[0] not in ["north", "south", "east", "west"]:
-            raise ValueError(f"Invalid orientation '{cleaned_params_list[0]}' for turnToThe")
+        if params_list[0] not in ["north", "south", "east", "west"]:
+            raise ValueError(f"Invalid orientation '{params_list[0]}' for turnToThe")
     elif command_name in ["walk", "jump", "drop", "pick", "grab", "letGo", "pop"]:
-        if not validate_value(cleaned_params_list[0]):
-            raise ValueError(f"Invalid value '{cleaned_params_list[0]}' for {command_name}")
+        if not validate_value(params_list[0]):
+            raise ValueError(f"Invalid value '{params_list[0]}' for {command_name}")
     elif command_name == "moves":
-        if not all(move in ["forward", "right", "left", "backwards","back"] for move in cleaned_params_list):
-            raise ValueError(f"Invalid moves '{cleaned_params_list}' in 'moves'")
+        if not all(move in ["forward", "right", "left", "backwards", "back"] for move in params_list):
+            raise ValueError(f"Invalid moves '{params_list}' in 'moves'")
     elif command_name == "safeExe":
-        return parse_command(cleaned_params_list[0])
+        return parse_command(params_list[0])
     
     return True
 
+
 def parse_control_structure(command):
-    if re.match(control_structure_regex, command):
-        return True
-    return False
+    return bool(re.match(control_structure_regex, command))
+
 
 def validate_value(value):
-    if value.isdigit() or value in variables:
-        return True
-    return False
+    return value.isdigit() or value in variables
+
 
 def parse_lines(lines):
     global variables, macros
-    variables = {}
-    macros = {}
+    variables.clear()
+    macros.clear()
+    
     try:
         for line in lines:
             line = line.strip()
@@ -105,18 +111,20 @@ def parse_lines(lines):
     except ValueError as e:
         return f"no: {e}"
 
+
 def parse_file(file_path):
     try:
         with open(file_path, "r") as file:
             for line in file:
                 result = parse_lines([line])
-                if result != "yes":
+                if result != "si":
                     return result
-        return "yes"
+        return "si"
     except FileNotFoundError:
         return "no: File not found."
     except Exception as e:
         return f"no: {e}"
+
 
 def main():
     print("Escoge una de las siguientes opciones:")
@@ -140,5 +148,6 @@ def main():
         print(result)
     
     else:
-        print("Opcion invalida. porfavor escoja entre 1 o 2.")
+        print("Opcion invalida. Por favor escoja entre 1 o 2.")
+
 main()
