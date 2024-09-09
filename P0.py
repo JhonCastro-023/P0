@@ -11,7 +11,7 @@ bloque = r"\n*{.*;*}\n*"
 var_def_regex = rf"NEW VAR (\w+)\s*=\s*{numero}]"
 
 ##Macro
-macro_def_regex = rf"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*{bloque}"
+macro_def_regex = rf"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*{bloque}*"
 
 ##EXEC
 exec_block_regex = rf"EXEC\s*{bloque}"
@@ -34,8 +34,8 @@ moves = rf"moves\s*\(\s*({direcciones_simples},)*\s*\)"
 nop = r""
 todos_comandos_msafeExe = rf"\s*({turnToMy}|{turnToThe}|{w_j_d_p_g_lG_pop}|{moves}|{nop})\s*"
 safeExe = rf"safeExe\s*\({todos_comandos_msafeExe}\)"
-
-lista_comandos = ["turnToMy", "turnToThe", "walk", "jump", "drop", "pick", "grab", "letGo", "pop", "moves", "safeExe", "nop"]
+##para añadir valores añadir a la lista 
+lista_comandos = [r"{turnToMy}", r"{turnToThe}", r"{w_j_d_p_g_lG_pop}", r"{moves}", r"{safeExe}", r"{nop}"]
 comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_comandos)
 command_regex = rf"({comandos_Patron})\s*\(\s*(.*)\s*\)"
 
