@@ -54,9 +54,6 @@ loop = rf"do\s*{condicion}\s*{bloque})\s*"
 Repeticion = rf"rep\s*{numero}\s*{bloque}"
 
 
-
-control_structure_regex = r"(if|do|rep|fi|od|per|else)"
-
 def parse_variable_definition(line):
     match = re.match(var_def_regex, line)
     if match:
