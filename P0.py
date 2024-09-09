@@ -69,6 +69,7 @@ def parse_variable_definition(line):
 
 def parse_macro_definition(line):
     match = re.match(macro_def_regex, line)
+    lista_palabras=[]
     if match:
         macro_name, params = match.groups()
         if macro_name in macros:
@@ -128,6 +129,7 @@ def validate_command(command_name, params):
     return True
 
 def parse_control_structure(command):
+    control_structure_regex= rf"({condicional}|{loop}|{Repeticion})"
     if re.match(control_structure_regex, command):
         return True
     return False
