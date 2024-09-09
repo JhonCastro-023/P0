@@ -19,7 +19,7 @@ exec_block_regex = rf"EXEC\s*{bloque}"
 ##Valores
 lista_valores = ["size", "myX", "myY", "myChips", "myBalloons", "balloonsHere", "chipsHere", "roomForChips"]
 Valores_Patron = "|".join(re.escape(palabra) for palabra in lista_valores)
-valores_regex = rf"{Valores_Patron}"
+valores_regex = rf"({Valores_Patron})"
 
 ##Comandos
     ##direcciones
