@@ -40,12 +40,15 @@ comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_comandos)
 command_regex = rf"({comandos_Patron})\s*\(\s*(.*)\s*\)"
 
 ##Condicionales y condicion
-condicion = r"(isBlocked\?|isFacing\?|zero\?)\s*\(\s*(.*)\s*\)"
+isBlocked = rf"isBlocked\?\s*\(\s*{direcciones_simples}\s*\)"
+isFacing = rf"isFacing\?\s*\(\s*{direcciones_complejas}\s*\)"
+zero = rf"zero\?)\s*\(\s*{numero}\s*\)"
+condicion = rf"({isBlocked}|{isFacing}|{zero})"
 condicional_then = rf"\n+then\s*{bloque}"
 condicional_else = rf"(\n+else\s*{bloque})?"
 condicional_then_else = rf"({condicional_then}{condicional_else})*"
-condicnoal_not = r"\s+(not?)"
-condicional = rf"if{condicnoal_not}\s*\(({condicion})\s*\){condicional_then_else}"
+condicinoal_not = r"\s+(not?)"
+condicional = rf"if{condicinoal_not}\s*\(({condicion})\s*\){condicional_then_else}"
 
 ##Loop
 loop = rf"do\s*{condicion}\s*{bloque})\s*"
