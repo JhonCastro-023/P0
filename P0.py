@@ -4,9 +4,17 @@ variables = {}
 macros = {}
 
 var_def_regex = r"NEW VAR (\w+)\s*=\s*(\d+)"
-macro_def_regex = r"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*"
-exec_block_regex = r"EXEC\s*\{(.*)\}"
-command_regex = r"(turnToMy|turnToThe|walk|jump|drop|pick|grab|letGo|pop|moves|safeExe|nop)\s*\((.*)\s*\)"
+macro_def_regex = r"NEW MACRO\s*(\w+)\s*\((\w*\s*)\)*\n*\{*\n*(.*)\n*\}*"
+exec_block_regex = r"EXEC\s*\{\n*(.*)\n*\}"
+lista_comandos = ["turnToMy", "turnToThe", "walk", "jump", "drop", "pick", "grab", "letGo", "pop", "moves", "safeExe", "nop"]
+comandos_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
+command_regex = rf"({Palabras_Patron})\s*\((.*)\s*\)"
+lista_valores = ["size", "myX", "myY", "myChips", "myBalloons", "balloonsHere", "chipsHere", "roomForChips"]
+Valores_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
+valores_regex = rf"({Valores_Patron})\s*\((.*)\s*\)"
+condicion = r"(isBlocked\?|isFacing\?|zero\?)\s*\((.*)\s*\)"
+condicional_then_else = r"(then\s*\{()\})"
+condicional = rf"(if)\s+(not*)\s*\(({condicion})\s*\)\n+{condicional_then_else}"
 control_structure_regex = r"(if|do|rep|fi|od|per|else)"
 
 def parse_variable_definition(line):
@@ -26,6 +34,10 @@ def parse_macro_definition(line):
         if macro_name in macros:
             raise ValueError(f"El macro '{macro_name}' ya fue definido.")
         macros[macro_name] = [param.strip() for param in params.split(",")]
+        lista_palabras.append(macro_name)
+        Palabras_Patron = "|".join(re.escape(palabra) for palabra in lista_palabras)
+        command_regex = rf"({Palabras_Patron})\s*\((.*)\s*\)"
+        print(command_regex)
         return True
     return False
 
@@ -47,7 +59,9 @@ def parse_block(block):
     return True
 
 def parse_command(command):
+    print(command)
     match = re.match(command_regex, command)
+    print(match)
     if match:
         command_name, params = match.groups()
         return validate_command(command_name, params)
